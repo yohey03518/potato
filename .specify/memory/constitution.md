@@ -1,50 +1,63 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+SYNC IMPACT REPORT
+Version: 0.0.0 -> 1.0.0
+- Status: Initial Ratification
+- Principles Added:
+  - I. Financial Integrity & Precision (Money handling)
+  - II. Test-Driven Development (TDD)
+  - III. Clean Code & Self-Documentation
+  - IV. SOLID Architecture
+  - V. Spec-Driven Development (SDD)
+  - VI. Observability & Traceability
+  - VII. Dependency Minimalism
+- Sections Added: Technology Standards, Governance & AI Collaboration
+- Templates Status:
+  - .specify/templates/plan-template.md: ✅ Compatible
+  - .specify/templates/spec-template.md: ✅ Compatible
+  - .specify/templates/tasks-template.md: ✅ Compatible (TDD explicitly supported)
+- TODOs: None
+-->
+
+# Potato Financial System Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Financial Integrity & Precision
+**Money-related logic MUST use high-precision types (e.g., `decimal`), never floating-point types (float/double).** All financial calculations MUST be covered by comprehensive unit tests including edge cases (rounding, overflow). Audit trails for transactions are mandatory to ensure financial data integrity.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Test-Driven Development (TDD)
+**NON-NEGOTIABLE: Tests MUST be written before implementation.** The Red-Green-Refactor cycle is strictly enforced. All core logic MUST be covered by unit tests. Tests serve as the primary validation of the specification and ensure system reliability.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Clean Code & Self-Documentation
+**Code MUST be self-documenting.** Variable and method names should clearly explain intent. Comments should explain "Why" a decision was made, not "What" the code is doing. Adherence to standard naming conventions and clean code practices is mandatory.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. SOLID Architecture
+**System design MUST adhere to SOLID principles.** Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion principles are to be strictly followed to ensure maintainability and scalability.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Spec-Driven Development (SDD)
+**Implementation starts only after a clear specification is defined.** All user prompts and AI interactions involved in spec generation MUST be recorded to ensure full traceability of requirements. The project follows a strict specification-first workflow.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### VI. Observability & Traceability
+**Structured logging is mandatory.** Logs MUST be structured (e.g., JSON) and provide enough context to trace system execution and logic flows completely. It must be possible to debug production issues via logs alone.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### VII. Dependency Minimalism
+**External HTTP APIs MUST be integrated directly.** Use standard libraries (e.g., `HttpClient`) rather than third-party SDK wrappers, unless the SDK provides critical complexity management that cannot be reasonably replicated. This ensures control and reduces dependency bloat.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Technology Standards
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**Platform**: The project MUST use the latest **.NET LTS (Long Term Support)** version.
+**Language**: C# is the primary language.
+**Testing**: xUnit or NUnit is recommended, ensuring compatibility with TDD workflows.
+
+## Governance & AI Collaboration
+
+**AI Proactivity**: AI agents are explicitly empowered and encouraged to proactively propose amendments to this constitution if gaps, inconsistencies, or opportunities for improvement are identified during development.
+
+**Auditability**: All user prompts driving changes must be recorded.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**Supremacy**: This Constitution supersedes all other technical practices.
+**Amendments**: Changes require documentation and approval. Versioning follows Semantic Versioning (MAJOR.MINOR.PATCH).
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-01-10 | **Last Amended**: 2026-01-10
