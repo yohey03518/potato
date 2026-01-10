@@ -1,20 +1,15 @@
 <!--
 SYNC IMPACT REPORT
-Version: 0.0.0 -> 1.0.0
-- Status: Initial Ratification
+Version: 1.0.0 -> 1.1.0
+- Status: Amendment
 - Principles Added:
-  - I. Financial Integrity & Precision (Money handling)
-  - II. Test-Driven Development (TDD)
-  - III. Clean Code & Self-Documentation
-  - IV. SOLID Architecture
-  - V. Spec-Driven Development (SDD)
-  - VI. Observability & Traceability
-  - VII. Dependency Minimalism
-- Sections Added: Technology Standards, Governance & AI Collaboration
+  - VIII. Intent-Driven Git History (Conventional Commits + "Why" focus)
+- Governance Added:
+  - Protected Artifacts clause (AI restriction on infrastructure dirs)
 - Templates Status:
   - .specify/templates/plan-template.md: ✅ Compatible
   - .specify/templates/spec-template.md: ✅ Compatible
-  - .specify/templates/tasks-template.md: ✅ Compatible (TDD explicitly supported)
+  - .specify/templates/tasks-template.md: ✅ Compatible
 - TODOs: None
 -->
 
@@ -43,6 +38,9 @@ Version: 0.0.0 -> 1.0.0
 ### VII. Dependency Minimalism
 **External HTTP APIs MUST be integrated directly.** Use standard libraries (e.g., `HttpClient`) rather than third-party SDK wrappers, unless the SDK provides critical complexity management that cannot be reasonably replicated. This ensures control and reduces dependency bloat.
 
+### VIII. Intent-Driven Git History
+**Commit messages MUST follow the Conventional Commits specification.** The subject line MUST describe the **"WHY"** (intent/business reason) rather than the "WHAT" (technical change). If the context for the "WHY" is missing, the AI agent MUST halt and request clarification from the user before committing.
+
 ## Technology Standards
 
 **Platform**: The project MUST use the latest **.NET LTS (Long Term Support)** version.
@@ -55,9 +53,11 @@ Version: 0.0.0 -> 1.0.0
 
 **Auditability**: All user prompts driving changes must be recorded.
 
+**Protected Artifacts**: The AI agent is **STRICTLY PROHIBITED** from modifying files in `.gemini/`, `.specify/scripts/`, and `.specify/templates/` unless explicitly commanded by the user. These directories contain critical agent infrastructure.
+
 ## Governance
 
 **Supremacy**: This Constitution supersedes all other technical practices.
 **Amendments**: Changes require documentation and approval. Versioning follows Semantic Versioning (MAJOR.MINOR.PATCH).
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-10 | **Last Amended**: 2026-01-10
+**Version**: 1.1.0 | **Ratified**: 2026-01-10 | **Last Amended**: 2026-01-10
