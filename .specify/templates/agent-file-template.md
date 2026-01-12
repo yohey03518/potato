@@ -1,6 +1,7 @@
 # [PROJECT NAME] Development Guidelines
 
 Auto-generated from all feature plans. Last updated: [DATE]
+**LANGUAGE CONSTRAINT**: All content generated using this template MUST be written in Traditional Chinese.
 
 ## Active Technologies
 

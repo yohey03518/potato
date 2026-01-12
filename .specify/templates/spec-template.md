@@ -4,6 +4,7 @@
 **Created**: [DATE]  
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
+**LANGUAGE CONSTRAINT**: All content generated using this template MUST be written in Traditional Chinese.
 
 ## User Scenarios & Testing *(mandatory)*
 

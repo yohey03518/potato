@@ -1,15 +1,16 @@
 <!--
 SYNC IMPACT REPORT
-Version: 1.0.0 -> 1.1.0
+Version: 1.1.0 -> 1.2.0
 - Status: Amendment
 - Principles Added:
-  - VIII. Intent-Driven Git History (Conventional Commits + "Why" focus)
-- Governance Added:
-  - Protected Artifacts clause (AI restriction on infrastructure dirs)
+  - IX. Language Localization (Traditional Chinese requirement)
+- Governance Added: None
 - Templates Status:
-  - .specify/templates/plan-template.md: ✅ Compatible
-  - .specify/templates/spec-template.md: ✅ Compatible
-  - .specify/templates/tasks-template.md: ✅ Compatible
+  - .specify/templates/plan-template.md: ✅ Updated
+  - .specify/templates/spec-template.md: ✅ Updated
+  - .specify/templates/tasks-template.md: ✅ Updated
+  - .specify/templates/checklist-template.md: ✅ Updated
+  - .specify/templates/agent-file-template.md: ✅ Updated
 - TODOs: None
 -->
 
@@ -41,6 +42,9 @@ Version: 1.0.0 -> 1.1.0
 ### VIII. Intent-Driven Git History
 **Commit messages MUST follow the Conventional Commits specification.** The subject line MUST describe the **"WHY"** (intent/business reason) rather than the "WHAT" (technical change). If the context for the "WHY" is missing, the AI agent MUST halt and request clarification from the user before committing.
 
+### IX. Language Localization
+**All AI-generated artifacts and communications MUST be in Traditional Chinese.** This applies to plans, specifications, code comments, documentation, and user interactions. The only exceptions are this Constitution file itself and Git commit messages, which MUST maintain the original language (English) for governance clarity and standardization.
+
 ## Technology Standards
 
 **Platform**: The project MUST use the latest **.NET LTS (Long Term Support)** version.
@@ -60,4 +64,4 @@ Version: 1.0.0 -> 1.1.0
 **Supremacy**: This Constitution supersedes all other technical practices.
 **Amendments**: Changes require documentation and approval. Versioning follows Semantic Versioning (MAJOR.MINOR.PATCH).
 
-**Version**: 1.1.0 | **Ratified**: 2026-01-10 | **Last Amended**: 2026-01-10
+**Version**: 1.2.0 | **Ratified**: 2026-01-10 | **Last Amended**: 2026-01-13

@@ -4,6 +4,7 @@
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+**LANGUAGE CONSTRAINT**: All content generated using this template MUST be written in Traditional Chinese.
 
 ## Summary
 
