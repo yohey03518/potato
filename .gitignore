@@ -54,4 +54,4 @@ TestResult.xml
 nunit-*.xml
 
 # macOS
-.DS_Store
+.DS_Store\n# IDE\n.idea/

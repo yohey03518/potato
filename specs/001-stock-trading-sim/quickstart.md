@@ -2,8 +2,15 @@
 
 ## 1. 環境準備
 - **.NET SDK**: 8.0+
-- **Database**: MySQL 8.0+
+- **Database**: MySQL 8.0+ (可透過 Docker Compose 啟動)
 - **API Key**: 需準備 Fugle Market Data API Key。
+
+### 啟動資料庫 (Docker)
+在專案根目錄執行：
+```bash
+docker-compose up -d
+```
+這將會啟動一個 MySQL 容器並自動執行 `init.sql` 來初始化 schema。
 
 ## 2. 設定檔 (appsettings.json)
 ```json
