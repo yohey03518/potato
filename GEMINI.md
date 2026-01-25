@@ -20,8 +20,33 @@
   - **Financial Integrity**: All monetary and price calculations MUST use the `decimal` type.
   - **Verification**: Always run all tests after modifying code to ensure stability.
 
-## Project Structure (Clean Architecture)
-- **src/Potato.Trading.Core/**: Core Layer (Domain) - Entities, Interfaces, Business Logic, ValueObjects.
-- **src/Potato.Trading.Infrastructure/**: Infrastructure Layer (Infra) - Database (EF Core), MarketData (HttpClient API Clients), Repositories.
-- **src/Potato.Trading.Cli/**: Presentation Layer (Presentation) - Console UI (Spectre.Console), Entry Point.
-- **tests/**: Unit and Integration Tests.
+## Project Structure
+
+### Source Code
+
+```text
+src/
+├── Potato.Core/           # Core Layer: Entities, Interfaces, Business Logic (Domain)
+│   ├── Entities/
+│   ├── Interfaces/
+│   ├── Services/
+│   └── ValueObjects/
+├── Potato.Infrastructure/ # Infrastructure Layer: Database, API Clients (Infra)
+│   ├── Data/
+│   ├── MarketData/        # API Clients implemented directly with HttpClient
+│   └── Repositories/
+└── Potato.Cli/            # Presentation Layer: Console UI, Entry Point (Presentation)
+    ├── Commands/
+    └── UI/
+```
+
+### Tests
+
+```text
+tests/
+├── Potato.Core.Tests/           # Unit tests for Core layer
+├── Potato.Infrastructure.Tests/ # Unit tests for Infrastructure layer
+└── Potato.Cli.Tests/            # Tests for CLI layer
+```
+
+**Structure Decision**: Adopts Clean Architecture (Core, Infrastructure, Cli) to decouple business logic from external dependencies (MySQL, Market Data API). The Infrastructure layer is responsible for HTTP communication.
