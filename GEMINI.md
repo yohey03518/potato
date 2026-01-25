@@ -18,6 +18,7 @@
 - **Constraints & Principles**:
   - **NO SDKs**: External APIs (e.g., Market Data) MUST be implemented directly via `HttpClient` or `WebSocket`. No third-party SDKs.
   - **Financial Integrity**: All monetary and price calculations MUST use the `decimal` type.
+  - **Verification**: Always run all tests after modifying code to ensure stability.
 
 ## Project Structure (Clean Architecture)
 - **src/Potato.Trading.Core/**: Core Layer (Domain) - Entities, Interfaces, Business Logic, ValueObjects.
