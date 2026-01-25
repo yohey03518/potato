@@ -42,12 +42,8 @@ Version: 1.1.0 -> 1.2.0
 ### VIII. Intent-Driven Git History
 **Commit messages MUST follow the Conventional Commits specification.** The subject line MUST describe the **"WHY"** (intent/business reason) rather than the "WHAT" (technical change). If the context for the "WHY" is missing, the AI agent MUST halt and request clarification from the user before committing.
 
-### IX. Language Localization (Traditional Chinese)
-**Strict Enforcement:** All documentation, plans, specifications, task lists, code comments, and CLI user interactions MUST be written in **Traditional Chinese (繁體中文)**.
-- **Exceptions:**
-  - **Code Symbols:** Variable names, function names, file paths, and specific technical keywords (e.g., `HttpClient`, `.NET 8`, `Spectre.Console`) MUST remain in English.
-  - **Governance:** This Constitution file and Git commit messages MUST remain in English.
-- **Verification:** Before outputting any text, the AI MUST verify it is not outputting English narrative where Chinese is expected.
+### IX. Language Localization
+**All AI-generated artifacts and communications MUST be in Traditional Chinese.** This applies to plans, specifications, code comments, documentation, and user interactions. The only exceptions are this Constitution file itself and Git commit messages, which MUST maintain the original language (English) for governance clarity and standardization.
 
 ## Technology Standards
 
