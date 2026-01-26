@@ -2,9 +2,12 @@
 - .NET 8 (LTS) (001-stock-trading-sim)
 - MySQL (via EF Core) (001-stock-trading-sim)
 
+## AI Instructions
+- If there is any ambiguous or unclear command from human, ask before doing.
+
 ## Technical Standards
 - **Language/Version**: .NET 8 (LTS) C#
-- **Architecture**: Clean Architecture (Core, Infrastructure, Cli)
+- **Architecture**: Clean Architecture (Core, Infrastructure, Client)
 - **Primary Dependencies**:
   - Microsoft.EntityFrameworkCore (EF Core)
   - NUnit (Testing)
@@ -35,7 +38,7 @@ src/
 │   ├── Data/
 │   ├── MarketData/        # API Clients implemented directly with HttpClient
 │   └── Repositories/
-└── Potato.Cli/            # Presentation Layer: Console UI, Entry Point (Presentation)
+└── Potato.Client/         # Presentation Layer: Console UI, Entry Point (Presentation)
     ├── Commands/
     └── UI/
 ```
@@ -46,7 +49,7 @@ src/
 tests/
 ├── Potato.Core.Tests/           # Unit tests for Core layer
 ├── Potato.Infrastructure.Tests/ # Unit tests for Infrastructure layer
-└── Potato.Cli.Tests/            # Tests for CLI layer
+└── Potato.Client.Tests/         # Tests for Client layer
 ```
 
-**Structure Decision**: Adopts Clean Architecture (Core, Infrastructure, Cli) to decouple business logic from external dependencies (MySQL, Market Data API). The Infrastructure layer is responsible for HTTP communication.
+**Structure Decision**: Adopts Clean Architecture (Core, Infrastructure, Client) to decouple business logic from external dependencies (MySQL, Market Data API). The Infrastructure layer is responsible for HTTP communication.
