@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Potato.Client.External.Fugle;
-using Potato.Client.External.Fugle.Models;
+using Potato.Client.Domain.Models;
+using Potato.Client.External.Fugle.Proxy;
 
 namespace Potato.Client.Services;
 
 public class StockPriceMonitorService(
-    IFugleApiClient fugleApiClient,
+    IStockApiProxy stockApiProxy,
     ILogger<StockPriceMonitorService> logger,
     IHostApplicationLifetime hostApplicationLifetime)
     : BackgroundService
@@ -21,15 +21,15 @@ public class StockPriceMonitorService(
             {
                 logger.LogInformation("Fetching snapshot quotes for TSE and OTC...");
 
-                var tseData = new List<SnapshotData>();
-                var otcData = new List<SnapshotData>();
+                var tseData = new List<StockSnapshot>();
+                var otcData = new List<StockSnapshot>();
                 bool permissionDenied = false;
 
                 try 
                 {
                     // 1. Try Fetch Full Snapshot
-                    var tseTask = fugleApiClient.GetSnapshotQuotesAsync("TSE");
-                    var otcTask = fugleApiClient.GetSnapshotQuotesAsync("OTC");
+                    var tseTask = stockApiProxy.GetSnapshotQuotesAsync("TSE");
+                    var otcTask = stockApiProxy.GetSnapshotQuotesAsync("OTC");
                     await Task.WhenAll(tseTask, otcTask);
                     tseData = await tseTask;
                     otcData = await otcTask;
@@ -69,6 +69,23 @@ public class StockPriceMonitorService(
                         Console.WriteLine($"{stock.Symbol} ({stock.Name}): Volume {stock.TradeVolume}");
                     }
                     Console.WriteLine("==============================================\n");
+
+                    // 4. Verify Real API Integration (Fetch First Stock Price)
+                    var firstStock = filteredStocks.FirstOrDefault();
+                    if (firstStock != null)
+                    {
+                        logger.LogInformation("Verifying real API integration by fetching quote for {Symbol}...", firstStock.Symbol);
+                        var quote = await stockApiProxy.GetIntradayQuoteAsync(firstStock.Symbol);
+
+                        if (quote != null)
+                        {
+                            Console.WriteLine($"\n[Real API Check] {quote.Symbol} ({quote.Name}) Current Price: {quote.LastPrice} (Change: {quote.ChangePercent}%)\n");
+                        }
+                        else
+                        {
+                            logger.LogWarning("Failed to fetch real intraday quote for {Symbol}.", firstStock.Symbol);
+                        }
+                    }
                 }
             }
         }
