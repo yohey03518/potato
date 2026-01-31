@@ -6,20 +6,12 @@ using Potato.Infrastructure.MarketData.Fugle.Models;
 
 namespace Potato.Infrastructure.MarketData.Fugle;
 
-public class FugleMarketDataService : IMarketDataService
+public class FugleMarketDataService(IFugleIntradayClient intradayClient, IFugleSnapshotClient snapshotClient)
+    : IMarketDataService
 {
-    private readonly IFugleIntradayClient _intradayClient;
-    private readonly IFugleSnapshotClient _snapshotClient;
-
-    public FugleMarketDataService(IFugleIntradayClient intradayClient, IFugleSnapshotClient snapshotClient)
-    {
-        _intradayClient = intradayClient;
-        _snapshotClient = snapshotClient;
-    }
-
     public async Task<IntradayQuote?> GetIntradayQuoteAsync(string symbolId)
     {
-        var json = await _intradayClient.GetIntradayQuoteAsync(symbolId);
+        var json = await intradayClient.GetIntradayQuoteAsync(symbolId);
         var response = JsonSerializer.Deserialize<IntradayQuoteResponse>(json);
 
         if (response == null) return null;
@@ -37,7 +29,7 @@ public class FugleMarketDataService : IMarketDataService
 
     public async Task<List<StockSnapshot>> GetSnapshotQuotesAsync(string market)
     {
-        var fugleData = await _snapshotClient.GetSnapshotQuotesAsync(market);
+        var fugleData = await snapshotClient.GetSnapshotQuotesAsync(market);
 
         return fugleData.Select(d => new StockSnapshot
         {

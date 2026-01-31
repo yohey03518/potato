@@ -6,26 +6,18 @@ using Potato.Infrastructure.MarketData.Fugle.Models;
 
 namespace Potato.Infrastructure.MarketData.Fugle.Clients;
 
-public class MockFugleSnapshotClient : IFugleSnapshotClient
+public class MockFugleSnapshotClient(IConfiguration configuration, ILogger<MockFugleSnapshotClient> logger)
+    : IFugleSnapshotClient
 {
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<MockFugleSnapshotClient> _logger;
-
-    public MockFugleSnapshotClient(IConfiguration configuration, ILogger<MockFugleSnapshotClient> logger)
-    {
-        _configuration = configuration;
-        _logger = logger;
-    }
-
     public Task<List<SnapshotData>> GetSnapshotQuotesAsync(string market)
     {
-        _logger.LogInformation("Using MOCK implementation for Snapshot Quotes ({Market})", market);
+        logger.LogInformation("Using MOCK implementation for Snapshot Quotes ({Market})", market);
 
-        var mockDataConfig = _configuration.GetSection("MockStockData").Get<List<MockStockItem>>();
+        var mockDataConfig = configuration.GetSection("MockStockData").Get<List<MockStockItem>>();
         
         if (mockDataConfig == null || !mockDataConfig.Any())
         {
-             _logger.LogWarning("No mock data found in 'MockStockData' configuration.");
+             logger.LogWarning("No mock data found in 'MockStockData' configuration.");
              return Task.FromResult(new List<SnapshotData>());
         }
 
