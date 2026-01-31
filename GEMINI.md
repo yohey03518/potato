@@ -21,10 +21,10 @@
 - **Constraints & Principles**:
   - **NO SDKs**: External APIs (e.g., Market Data) MUST be implemented directly via `HttpClient` or `WebSocket`. No third-party SDKs.
   - **Clean Architecture**:
-      - **Core**: Entities and Interfaces (e.g., `IMarketDataService`, `StockSnapshot`) reside here. NO dependencies on Infrastructure or Client.
-      - **Infrastructure**: Implementation of Interfaces (e.g., `FugleMarketDataService`, HTTP Clients) resides here. Depends on Core.
+      - **Core**: Entities and Interfaces (e.g., `IMarketDataProxy`, `StockSnapshot`) reside here. NO dependencies on Infrastructure or Client.
+      - **Infrastructure**: Implementation of Interfaces (e.g., `FugleMarketDataProxy`, HTTP Clients) resides here. Depends on Core.
       - **Client**: Entry point and UI. Depends on Core and Infrastructure (for DI registration only).
-  - **Abstraction**: External APIs MUST be wrapped in a Service (e.g., `IMarketDataService`) using Domain Models. DO NOT leak external API models (DTOs) into the Core/Service layers.
+  - **Abstraction**: External APIs MUST be wrapped in a Proxy Layer (e.g., `IMarketDataProxy`) using Domain Models. DO NOT leak external API models (DTOs) into the Core/Service layers.
   - **Financial Integrity**: All monetary and price calculations MUST use the `decimal` type.
   - **Verification**: Always run all tests after modifying code to ensure stability.
 

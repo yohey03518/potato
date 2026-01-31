@@ -6,7 +6,7 @@ using Potato.Core.Interfaces;
 namespace Potato.Client.Services;
 
 public class StockPriceMonitorService(
-    IMarketDataService marketDataService,
+    IMarketDataProxy marketDataProxy,
     ILogger<StockPriceMonitorService> logger,
     IHostApplicationLifetime hostApplicationLifetime)
     : BackgroundService
@@ -25,8 +25,8 @@ public class StockPriceMonitorService(
                 var otcData = new List<StockSnapshot>();
 
                 // 1. Fetch Full Snapshot
-                var tseTask = marketDataService.GetSnapshotQuotesAsync("TSE");
-                var otcTask = marketDataService.GetSnapshotQuotesAsync("OTC");
+                var tseTask = marketDataProxy.GetSnapshotQuotesAsync("TSE");
+                var otcTask = marketDataProxy.GetSnapshotQuotesAsync("OTC");
                 await Task.WhenAll(tseTask, otcTask);
                 tseData = await tseTask;
                 otcData = await otcTask;
@@ -61,7 +61,7 @@ public class StockPriceMonitorService(
                     if (firstStock != null)
                     {
                         logger.LogInformation("Verifying real API integration by fetching quote for {Symbol}...", firstStock.Symbol);
-                        var quote = await marketDataService.GetIntradayQuoteAsync(firstStock.Symbol);
+                        var quote = await marketDataProxy.GetIntradayQuoteAsync(firstStock.Symbol);
 
                         if (quote != null)
                         {

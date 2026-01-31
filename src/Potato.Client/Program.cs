@@ -53,8 +53,8 @@ try
         });
     }
 
-    // 3. Register Market Data Service (Core Interface -> Infrastructure Implementation)
-    builder.Services.AddSingleton<IMarketDataService, FugleMarketDataService>();
+    // 3. Register Market Data Proxy (Core Interface -> Infrastructure Implementation)
+    builder.Services.AddSingleton<IMarketDataProxy, FugleMarketDataProxy>();
 
     // Register the Hosted Service
     builder.Services.AddHostedService<StockPriceMonitorService>();
