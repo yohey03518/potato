@@ -23,32 +23,18 @@ public class StockPriceMonitorService(
 
                 var tseData = new List<StockSnapshot>();
                 var otcData = new List<StockSnapshot>();
-                bool permissionDenied = false;
 
-                try 
-                {
-                    // 1. Try Fetch Full Snapshot
-                    var tseTask = marketDataService.GetSnapshotQuotesAsync("TSE");
-                    var otcTask = marketDataService.GetSnapshotQuotesAsync("OTC");
-                    await Task.WhenAll(tseTask, otcTask);
-                    tseData = await tseTask;
-                    otcData = await otcTask;
-                }
-                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
-                {
-                    logger.LogWarning("Snapshot Quotes API is forbidden (403). API Key does not have sufficient permissions.");
-                    permissionDenied = true;
-                }
+                // 1. Fetch Full Snapshot
+                var tseTask = marketDataService.GetSnapshotQuotesAsync("TSE");
+                var otcTask = marketDataService.GetSnapshotQuotesAsync("OTC");
+                await Task.WhenAll(tseTask, otcTask);
+                tseData = await tseTask;
+                otcData = await otcTask;
 
-                if (permissionDenied)
+                var allStocks = tseData.Concat(otcData).ToList();
+
+                if (allStocks.Any())
                 {
-                    Console.WriteLine("\n[API Permission Error] Unable to fetch stock list for filtering.");
-                    Console.WriteLine("The 'Snapshot Quotes' API requires a Developer or Advanced plan.");
-                    Console.WriteLine("Please upgrade your Fugle API key to use this feature.\n");
-                }
-                else
-                {
-                    var allStocks = tseData.Concat(otcData).ToList();
                     logger.LogInformation("Total stocks fetched: {Count}", allStocks.Count);
 
                     // 2. Filter Data
@@ -86,6 +72,10 @@ public class StockPriceMonitorService(
                             logger.LogWarning("Failed to fetch real intraday quote for {Symbol}.", firstStock.Symbol);
                         }
                     }
+                }
+                else
+                {
+                    logger.LogWarning("No stocks were retrieved for filtering.");
                 }
             }
         }
