@@ -1,9 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using Potato.Client.External.Fugle;
-using Potato.Client.External.Fugle.Clients;
-using Potato.Client.External.Fugle.Proxy;
+using Potato.Core.Interfaces;
+using Potato.Infrastructure.MarketData.Fugle;
+using Potato.Infrastructure.MarketData.Fugle.Clients;
 using Potato.Client.Services;
 using Serilog;
 
@@ -53,8 +53,8 @@ try
         });
     }
 
-    // 3. Register Proxy
-    builder.Services.AddSingleton<IStockApiProxy, FugleApiProxy>();
+    // 3. Register Market Data Service (Core Interface -> Infrastructure Implementation)
+    builder.Services.AddSingleton<IMarketDataService, FugleMarketDataService>();
 
     // Register the Hosted Service
     builder.Services.AddHostedService<StockPriceMonitorService>();

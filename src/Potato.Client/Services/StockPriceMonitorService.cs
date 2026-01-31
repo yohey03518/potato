@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Potato.Client.Domain.Models;
-using Potato.Client.External.Fugle.Proxy;
+using Potato.Core.Entities;
+using Potato.Core.Interfaces;
 
 namespace Potato.Client.Services;
 
 public class StockPriceMonitorService(
-    IStockApiProxy stockApiProxy,
+    IMarketDataService marketDataService,
     ILogger<StockPriceMonitorService> logger,
     IHostApplicationLifetime hostApplicationLifetime)
     : BackgroundService
@@ -28,8 +28,8 @@ public class StockPriceMonitorService(
                 try 
                 {
                     // 1. Try Fetch Full Snapshot
-                    var tseTask = stockApiProxy.GetSnapshotQuotesAsync("TSE");
-                    var otcTask = stockApiProxy.GetSnapshotQuotesAsync("OTC");
+                    var tseTask = marketDataService.GetSnapshotQuotesAsync("TSE");
+                    var otcTask = marketDataService.GetSnapshotQuotesAsync("OTC");
                     await Task.WhenAll(tseTask, otcTask);
                     tseData = await tseTask;
                     otcData = await otcTask;
@@ -75,7 +75,7 @@ public class StockPriceMonitorService(
                     if (firstStock != null)
                     {
                         logger.LogInformation("Verifying real API integration by fetching quote for {Symbol}...", firstStock.Symbol);
-                        var quote = await stockApiProxy.GetIntradayQuoteAsync(firstStock.Symbol);
+                        var quote = await marketDataService.GetIntradayQuoteAsync(firstStock.Symbol);
 
                         if (quote != null)
                         {
