@@ -27,6 +27,7 @@
   - **Abstraction**: External APIs MUST be wrapped in a Proxy Layer (e.g., `IMarketDataProxy`) using Domain Models. DO NOT leak external API models (DTOs) into the Core/Service layers.
   - **Financial Integrity**: All monetary and price calculations MUST use the `decimal` type.
   - **Verification**: Always run all tests after modifying code to ensure stability.
+  - **No API Client Tests**: Do not write unit tests for infrastructure API clients (e.g. `FugleTechnicalApiClient`). Only integration or manual tests are required for these.
 
 ## Project Structure
 

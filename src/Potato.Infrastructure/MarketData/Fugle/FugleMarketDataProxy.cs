@@ -6,7 +6,10 @@ using Potato.Infrastructure.MarketData.Fugle.Models;
 
 namespace Potato.Infrastructure.MarketData.Fugle;
 
-public class FugleMarketDataProxy(IFugleIntradayClient intradayClient, IFugleSnapshotClient snapshotClient)
+public class FugleMarketDataProxy(
+    IFugleIntradayClient intradayClient, 
+    IFugleSnapshotClient snapshotClient,
+    IFugleTechnicalClient technicalClient)
     : IMarketDataProxy
 {
     public async Task<IntradayQuote?> GetIntradayQuoteAsync(string symbolId)
@@ -31,9 +34,20 @@ public class FugleMarketDataProxy(IFugleIntradayClient intradayClient, IFugleSna
 
     public async Task<List<StockSnapshot>> GetSnapshotQuotesAsync(string market)
     {
-        var fugleData = await snapshotClient.GetSnapshotQuotesAsync(market);
+        var response = await snapshotClient.GetSnapshotQuotesAsync(market);
+        
+        if (response == null || response.Data == null)
+            return new List<StockSnapshot>();
 
-        return fugleData.Select(d => new StockSnapshot
+        DateOnly snapshotDate;
+        if (!DateOnly.TryParseExact(response.Date, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out snapshotDate))
+        {
+            // Fallback or log error? If API date format changes. 
+            // The example shows "2023-05-29".
+            snapshotDate = DateOnly.FromDateTime(DateTime.Today);
+        }
+
+        return response.Data.Select(d => new StockSnapshot
         {
             Symbol = d.Symbol,
             Name = d.Name,
@@ -45,7 +59,22 @@ public class FugleMarketDataProxy(IFugleIntradayClient intradayClient, IFugleSna
             ChangePercent = d.ChangePercent,
             TradeVolume = d.TradeVolume,
             TradeValue = d.TradeValue,
+            Date = snapshotDate,
             LastUpdated = DateTime.Now 
+        }).ToList();
+    }
+
+    public async Task<List<SmaData>> GetTechnicalSmaAsync(string symbolId, int period, string from, string to)
+    {
+        var response = await technicalClient.GetSmaAsync(symbolId, period, from, to);
+        
+        if (response == null || response.Data == null) 
+            return new List<SmaData>();
+
+        return response.Data.Select(d => new SmaData
+        {
+            Date = DateOnly.Parse(d.Date),
+            Value = d.Sma
         }).ToList();
     }
 }

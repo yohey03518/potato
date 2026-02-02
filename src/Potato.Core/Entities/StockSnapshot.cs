@@ -12,5 +12,6 @@ public class StockSnapshot
     public decimal? ChangePercent { get; set; }
     public long TradeVolume { get; set; }
     public decimal TradeValue { get; set; }
+    public DateOnly Date { get; set; }
     public DateTime LastUpdated { get; set; }
 }

@@ -51,7 +51,17 @@ try
                 client.DefaultRequestHeaders.Add("X-API-KEY", fugleConfig.ApiKey);
             }
         });
+
     }
+
+    // 3. Register Technical Client
+    builder.Services.AddHttpClient<IFugleTechnicalClient, FugleTechnicalApiClient>(client =>
+    {
+        if (!string.IsNullOrEmpty(fugleConfig.ApiKey))
+        {
+            client.DefaultRequestHeaders.Add("X-API-KEY", fugleConfig.ApiKey);
+        }
+    });
 
     // 3. Register Market Data Proxy (Core Interface -> Infrastructure Implementation)
     builder.Services.AddSingleton<IMarketDataProxy, FugleMarketDataProxy>();

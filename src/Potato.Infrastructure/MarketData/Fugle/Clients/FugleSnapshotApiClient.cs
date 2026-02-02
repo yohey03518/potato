@@ -7,7 +7,7 @@ namespace Potato.Infrastructure.MarketData.Fugle.Clients;
 public class FugleSnapshotApiClient(HttpClient httpClient, ILogger<FugleSnapshotApiClient> logger)
     : IFugleSnapshotClient
 {
-    public async Task<List<SnapshotData>> GetSnapshotQuotesAsync(string market)
+    public async Task<SnapshotResponse?> GetSnapshotQuotesAsync(string market)
     {
         var url = $"https://api.fugle.tw/marketdata/v1.0/stock/snapshot/quotes/{market}?type=COMMONSTOCK";
 
@@ -23,7 +23,7 @@ public class FugleSnapshotApiClient(HttpClient httpClient, ILogger<FugleSnapshot
                 Console.WriteLine("\n[API Permission Error] Unable to fetch stock list for filtering.");
                 Console.WriteLine("The 'Snapshot Quotes' API requires a Developer or Advanced plan.");
                 Console.WriteLine("Please upgrade your Fugle API key to use this feature.\n");
-                return new List<SnapshotData>();
+                return null;
             }
 
             if (!response.IsSuccessStatusCode)
@@ -35,7 +35,7 @@ public class FugleSnapshotApiClient(HttpClient httpClient, ILogger<FugleSnapshot
             var content = await response.Content.ReadAsStringAsync();
             var snapshotResponse = JsonSerializer.Deserialize<SnapshotResponse>(content);
 
-            return snapshotResponse?.Data ?? new List<SnapshotData>();
+            return snapshotResponse;
         }
         catch (HttpRequestException ex)
         {
