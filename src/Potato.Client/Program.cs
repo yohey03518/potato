@@ -58,6 +58,14 @@ try
         }
     });
 
+    builder.Services.AddHttpClient<IFugleHistoryClient, FugleHistoryApiClient>(client =>
+    {
+        if (!string.IsNullOrEmpty(fugleConfig.ApiKey))
+        {
+            client.DefaultRequestHeaders.Add("X-API-KEY", fugleConfig.ApiKey);
+        }
+    });
+
     builder.Services.AddSingleton<IMarketDataProxy, FugleMarketDataProxy>();
 
     builder.Services.AddSingleton<IInitialCandidateFilter, InitialCandidateFilter>();

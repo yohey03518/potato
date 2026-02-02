@@ -24,108 +24,121 @@ public class InitialCandidateFilterTests
     }
 
     [Test]
-    public async Task GetAsync_ShouldReturnEmpty_WhenVolumeBelowThreshold()
+    public async Task GetAsync_ShouldReturnEmpty_WhenNoCandlesReturned()
     {
         // Arrange
-        var lowVolumeStock = new StockSnapshot { Symbol = "2330", TradeVolume = 4000 };
-        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { lowVolumeStock });
-        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
-
-        // Act
-        var result = await _filter.GetAsync();
-
-        // Assert
-        result.Should().BeEmpty();
-    }
-
-    [Test]
-    public async Task GetAsync_ShouldReturnCandidate_WhenConditionsMet_Case1_YesterdayData()
-    {
-        // Case 1: Snapshot Date < Today. Compare ClosePrice vs SMA(T-1)
-        var today = DateOnly.FromDateTime(DateTime.Now);
-        var yesterday = today.AddDays(-1);
-        
-        var validStock = new StockSnapshot 
-        { 
-            Symbol = "2330", 
-            TradeVolume = 6000, 
-            Date = yesterday,
-            ClosePrice = 100 
-        };
-
-        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { validStock });
-        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
-
-        // SMA at 90 (Price 100 > 90 -> Include)
-        var smaData = new List<SmaData> { new SmaData { Date = yesterday, Value = 90 } };
-        _marketDataProxyMock.GetTechnicalSmaAsync(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>())
-            .Returns(smaData);
-
-        // Act
-        var result = await _filter.GetAsync();
-
-        // Assert
-        result.Should().ContainSingle().Which.Symbol.Should().Be("2330");
-    }
-
-    [Test]
-    public async Task GetAsync_ShouldReturnCandidate_WhenConditionsMet_Case2_TodayData()
-    {
-        // Case 2: Snapshot Date == Today. Compare (Close - Change) vs SMA(T-1)
-        var today = DateOnly.FromDateTime(DateTime.Now);
-        var yesterday = today.AddDays(-1);
-
-        var validStock = new StockSnapshot 
-        { 
-            Symbol = "2330", 
-            TradeVolume = 6000, 
-            Date = today,
-            ClosePrice = 110,
-            Change = 10 
-            // Previous Close = 110 - 10 = 100
-        };
-
-        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { validStock });
-        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
-
-        // SMA(T-1) at 90 (PrevClose 100 > 90 -> Include)
-        var smaData = new List<SmaData> { new SmaData { Date = yesterday, Value = 90 } };
-        _marketDataProxyMock.GetTechnicalSmaAsync(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>())
-            .Returns(smaData);
-
-        // Act
-        var result = await _filter.GetAsync();
-
-        // Assert
-        result.Should().ContainSingle().Which.Symbol.Should().Be("2330");
-    }
-
-    [Test]
-    public async Task GetAsync_ShouldFilterOut_WhenPriceBelowMA()
-    {
-        var today = DateOnly.FromDateTime(DateTime.Now);
-        var yesterday = today.AddDays(-1);
-        
-        var stock = new StockSnapshot 
-        { 
-            Symbol = "2330", 
-            TradeVolume = 6000, 
-            Date = yesterday,
-            ClosePrice = 80 
-        };
-
+        var stock = new StockSnapshot { Symbol = "2330" };
         _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
         _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
 
-        // SMA at 90 (Price 80 < 90 -> Exclude)
-        var smaData = new List<SmaData> { new SmaData { Date = yesterday, Value = 90 } };
-        _marketDataProxyMock.GetTechnicalSmaAsync(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>())
-            .Returns(smaData);
+        _marketDataProxyMock.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            .Returns(new List<Candle>());
 
         // Act
         var result = await _filter.GetAsync();
 
         // Assert
         result.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task GetAsync_ShouldReturnEmpty_WhenVolumeBelowThreshold()
+    {
+        // Arrange
+        var stock = new StockSnapshot { Symbol = "2330" };
+        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
+        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
+
+        // Generate candles with low volume
+        var candles = GenerateCandles(30, close: 100, volume: 4000);
+        _marketDataProxyMock.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            .Returns(candles);
+
+        // Act
+        var result = await _filter.GetAsync();
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task GetAsync_ShouldReturnEmpty_WhenPriceBelowMA()
+    {
+        // Arrange
+        var stock = new StockSnapshot { Symbol = "2330" };
+        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
+        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
+
+        // Generate candles where Close (100) < SMA.
+        // If all closes are 100, SMA is 100. Price is 100.
+        // Current logic: Price > SMA. 100 > 100 is False.
+        var candles = GenerateCandles(30, close: 100, volume: 6000);
+        _marketDataProxyMock.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            .Returns(candles);
+
+        // Act
+        var result = await _filter.GetAsync();
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task GetAsync_ShouldReturnCandidate_WhenConditionsMet()
+    {
+        // Arrange
+        var stock = new StockSnapshot { Symbol = "2330" };
+        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
+        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
+
+        // Generate candles where Last Close > SMA
+        // Past 20 days Close = 100. SMA = 100.
+        // Last Candle Close = 110.
+        // Last Candle Volume = 6000.
+        
+        var candles = GenerateCandles(25, close: 100, volume: 6000);
+        // Modify last candle to have higher price
+        var lastCandle = candles.Last();
+        lastCandle.Close = 110; 
+        // Note: SMA calculation usually includes the current candle if we just take last 20.
+        // Logic: Skip(targetIndex - 19).Take(20).
+        // If last candle changes, SMA changes slightly.
+        // (19 * 100 + 110) / 20 = (1900 + 110)/20 = 2010/20 = 100.5
+        // Price 110 > SMA 100.5 -> True.
+
+        _marketDataProxyMock.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            .Returns(candles);
+
+        // Act
+        var result = await _filter.GetAsync();
+
+        // Assert
+        result.Should().ContainSingle();
+        result.First().Symbol.Should().Be("2330");
+    }
+
+    private List<Candle> GenerateCandles(int count, decimal close, long volume)
+    {
+        var candles = new List<Candle>();
+        var date = DateOnly.FromDateTime(DateTime.Today.AddDays(-count));
+        
+        for (int i = 0; i < count; i++)
+        {
+            // Skip "Today" to ensure we simulate "Yesterday's" data being the target
+            // OR ensure GenerateCandles creates data UP TO Yesterday.
+            // My logic in filter: "LastOrDefault(c => c.Date < today)".
+            // So if I generate candles up to Yesterday, it picks the last one.
+            
+            candles.Add(new Candle
+            {
+                Date = date.AddDays(i),
+                Close = close,
+                Volume = volume,
+                High = close + 5,
+                Low = close - 5,
+                Open = close
+            });
+        }
+        return candles;
     }
 }

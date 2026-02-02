@@ -9,9 +9,32 @@ namespace Potato.Infrastructure.MarketData.Fugle;
 public class FugleMarketDataProxy(
     IFugleIntradayClient intradayClient, 
     IFugleSnapshotClient snapshotClient,
-    IFugleTechnicalClient technicalClient)
+    IFugleTechnicalClient technicalClient,
+    IFugleHistoryClient historyClient)
     : IMarketDataProxy
 {
+    public async Task<List<Candle>> GetTechnicalCandlesAsync(string symbolId, string from, string to)
+    {
+        var response = await historyClient.GetCandlesAsync(symbolId, from, to);
+
+        if (response == null || response.Data == null)
+            return new List<Candle>();
+
+        return response.Data.Select(d => 
+        {
+            DateOnly.TryParse(d.Date, out var date);
+            return new Candle
+            {
+                Date = date,
+                Open = d.Open,
+                High = d.High,
+                Low = d.Low,
+                Close = d.Close,
+                Volume = d.Volume,
+                Change = d.Change
+            };
+        }).ToList();
+    }
     public async Task<IntradayQuote?> GetIntradayQuoteAsync(string symbolId)
     {
         var json = await intradayClient.GetIntradayQuoteAsync(symbolId);
