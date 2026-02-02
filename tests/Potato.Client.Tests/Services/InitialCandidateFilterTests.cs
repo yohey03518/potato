@@ -32,7 +32,7 @@ public class InitialCandidateFilterTests
         _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
 
         // Act
-        var result = await _filter.GetAsync(CancellationToken.None);
+        var result = await _filter.GetAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -62,7 +62,7 @@ public class InitialCandidateFilterTests
             .Returns(smaData);
 
         // Act
-        var result = await _filter.GetAsync(CancellationToken.None);
+        var result = await _filter.GetAsync();
 
         // Assert
         result.Should().ContainSingle().Which.Symbol.Should().Be("2330");
@@ -94,7 +94,7 @@ public class InitialCandidateFilterTests
             .Returns(smaData);
 
         // Act
-        var result = await _filter.GetAsync(CancellationToken.None);
+        var result = await _filter.GetAsync();
 
         // Assert
         result.Should().ContainSingle().Which.Symbol.Should().Be("2330");
@@ -123,7 +123,7 @@ public class InitialCandidateFilterTests
             .Returns(smaData);
 
         // Act
-        var result = await _filter.GetAsync(CancellationToken.None);
+        var result = await _filter.GetAsync();
 
         // Assert
         result.Should().BeEmpty();

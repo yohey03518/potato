@@ -9,7 +9,7 @@ public class InitialCandidateFilter(
     ILogger<InitialCandidateFilter> logger)
     : IInitialCandidateFilter
 {
-    public async Task<List<StockSnapshot>> GetAsync(CancellationToken stoppingToken)
+    public async Task<List<StockSnapshot>> GetAsync()
     {
         // 1. Fetch Full Snapshot for initial filtering
         var tseData = await marketDataProxy.GetSnapshotQuotesAsync("TSE");
@@ -33,8 +33,6 @@ public class InitialCandidateFilter(
         // Process in batches or one by one. For simplicity here, sequential.
         foreach (var stock in volumeCandidates)
         {
-            if (stoppingToken.IsCancellationRequested) break;
-
             try 
             {
                 // Fetch 20MA
@@ -144,7 +142,7 @@ public class InitialCandidateFilter(
                 }
                 
                 // Small delay to be nice to API
-                await Task.Delay(50, stoppingToken);
+                await Task.Delay(50);
             }
             catch (Exception ex)
             {
