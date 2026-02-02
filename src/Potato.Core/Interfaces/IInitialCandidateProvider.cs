@@ -2,7 +2,7 @@ using Potato.Core.Entities;
 
 namespace Potato.Core.Interfaces;
 
-public interface IInitialCandidateFilter
+public interface IInitialCandidateProvider
 {
     Task<List<StockSnapshot>> GetAsync();
 }

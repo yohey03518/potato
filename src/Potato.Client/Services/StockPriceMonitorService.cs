@@ -7,7 +7,7 @@ namespace Potato.Client.Services;
 
 public class StockPriceMonitorService(
     IMarketDataProxy marketDataProxy,
-    IInitialCandidateFilter initialCandidateFilter,
+    IInitialCandidateProvider initialCandidateProvider,
     IEnumerable<IStrategy> strategies,
     ILogger<StockPriceMonitorService> logger)
     : BackgroundService
@@ -18,7 +18,7 @@ public class StockPriceMonitorService(
     {
         logger.LogInformation("StockPriceMonitorService is starting.");
 
-        var candidates = await initialCandidateFilter.GetAsync();
+        var candidates = await initialCandidateProvider.GetAsync();
 
         while (!stoppingToken.IsCancellationRequested)
         {

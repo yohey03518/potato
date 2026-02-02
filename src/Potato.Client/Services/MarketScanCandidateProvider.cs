@@ -4,10 +4,10 @@ using Potato.Core.Interfaces;
 
 namespace Potato.Client.Services;
 
-public class InitialCandidateFilter(
+public class MarketScanCandidateProvider(
     IMarketDataProxy marketDataProxy,
-    ILogger<InitialCandidateFilter> logger)
-    : IInitialCandidateFilter
+    ILogger<MarketScanCandidateProvider> logger)
+    : IInitialCandidateProvider
 {
     private static readonly SemaphoreSlim _semaphore = new(5); // Throttle concurrent API calls
 

@@ -9,18 +9,18 @@ using Potato.Core.Interfaces;
 namespace Potato.Client.Tests.Services;
 
 [TestFixture]
-public class InitialCandidateFilterTests
+public class MarketScanCandidateProviderTests
 {
-    private IMarketDataProxy _marketDataProxyMock;
-    private ILogger<InitialCandidateFilter> _loggerMock;
-    private InitialCandidateFilter _filter;
+    private IMarketDataProxy _marketDataProxy = null!;
+    private ILogger<MarketScanCandidateProvider> _logger = null!;
+    private MarketScanCandidateProvider _provider = null!;
 
     [SetUp]
-    public void Setup()
+    public void SetUp()
     {
-        _marketDataProxyMock = Substitute.For<IMarketDataProxy>();
-        _loggerMock = Substitute.For<ILogger<InitialCandidateFilter>>();
-        _filter = new InitialCandidateFilter(_marketDataProxyMock, _loggerMock);
+        _marketDataProxy = Substitute.For<IMarketDataProxy>();
+        _logger = Substitute.For<ILogger<MarketScanCandidateProvider>>();
+        _provider = new MarketScanCandidateProvider(_marketDataProxy, _logger);
     }
 
     [Test]
@@ -28,14 +28,14 @@ public class InitialCandidateFilterTests
     {
         // Arrange
         var stock = new StockSnapshot { Symbol = "2330" };
-        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
-        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
-
-        _marketDataProxyMock.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+        _marketDataProxy.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
+        _marketDataProxy.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
+        
+        _marketDataProxy.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
             .Returns(new List<Candle>());
 
         // Act
-        var result = await _filter.GetAsync();
+        var result = await _provider.GetAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -46,16 +46,16 @@ public class InitialCandidateFilterTests
     {
         // Arrange
         var stock = new StockSnapshot { Symbol = "2330" };
-        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
-        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
+        _marketDataProxy.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
+        _marketDataProxy.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
 
         // Generate candles with low volume
         var candles = GenerateCandles(30, close: 100, volume: 4000);
-        _marketDataProxyMock.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+        _marketDataProxy.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
             .Returns(candles);
 
         // Act
-        var result = await _filter.GetAsync();
+        var result = await _provider.GetAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -66,18 +66,18 @@ public class InitialCandidateFilterTests
     {
         // Arrange
         var stock = new StockSnapshot { Symbol = "2330" };
-        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
-        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
+        _marketDataProxy.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
+        _marketDataProxy.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
 
         // Generate candles where Close (100) < SMA.
         // If all closes are 100, SMA is 100. Price is 100.
         // Current logic: Price > SMA. 100 > 100 is False.
         var candles = GenerateCandles(30, close: 100, volume: 6000);
-        _marketDataProxyMock.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+        _marketDataProxy.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
             .Returns(candles);
 
         // Act
-        var result = await _filter.GetAsync();
+        var result = await _provider.GetAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -88,8 +88,8 @@ public class InitialCandidateFilterTests
     {
         // Arrange
         var stock = new StockSnapshot { Symbol = "2330" };
-        _marketDataProxyMock.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
-        _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
+        _marketDataProxy.GetSnapshotQuotesAsync("TSE").Returns(new List<StockSnapshot> { stock });
+        _marketDataProxy.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
 
         // Generate candles where Last Close > SMA
         // Past 20 days Close = 100. SMA = 100.
@@ -106,11 +106,11 @@ public class InitialCandidateFilterTests
         // (19 * 100 + 110) / 20 = (1900 + 110)/20 = 2010/20 = 100.5
         // Price 110 > SMA 100.5 -> True.
 
-        _marketDataProxyMock.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+        _marketDataProxy.GetTechnicalCandlesAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
             .Returns(candles);
 
         // Act
-        var result = await _filter.GetAsync();
+        var result = await _provider.GetAsync();
 
         // Assert
         result.Should().ContainSingle();

@@ -68,7 +68,17 @@ try
 
     builder.Services.AddSingleton<IMarketDataProxy, FugleMarketDataProxy>();
 
-    builder.Services.AddSingleton<IInitialCandidateFilter, InitialCandidateFilter>();
+    var providerStrategy = builder.Configuration.GetValue<string>("StockSettings:ProviderStrategy") ?? "MarketScan";
+    if (providerStrategy.Equals("CustomList", StringComparison.OrdinalIgnoreCase))
+    {
+        Log.Information("Using CustomListCandidateProvider.");
+        builder.Services.AddSingleton<IInitialCandidateProvider, CustomListCandidateProvider>();
+    }
+    else
+    {
+        Log.Information("Using MarketScanCandidateProvider.");
+        builder.Services.AddSingleton<IInitialCandidateProvider, MarketScanCandidateProvider>();
+    }
 
     builder.Services.AddSingleton<IStrategy, Potato.Core.Services.RandomEntryStrategy>();
 
