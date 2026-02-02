@@ -35,7 +35,7 @@ try
     });
 
     // 2. Register Snapshot Client (Real or Mock based on config)
-    bool useMockSnapshot = builder.Configuration.GetValue<bool>("FugleApi:UseMockSnapshot");
+    var useMockSnapshot = builder.Configuration.GetValue<bool>("FugleApi:UseMockSnapshot");
     
     if (useMockSnapshot)
     {
@@ -55,6 +55,9 @@ try
 
     // 3. Register Market Data Proxy (Core Interface -> Infrastructure Implementation)
     builder.Services.AddSingleton<IMarketDataProxy, FugleMarketDataProxy>();
+
+    // 4. Register Strategies
+    builder.Services.AddSingleton<IStrategy, Potato.Core.Services.RandomEntryStrategy>();
 
     // Register the Hosted Service
     builder.Services.AddHostedService<StockPriceMonitorService>();

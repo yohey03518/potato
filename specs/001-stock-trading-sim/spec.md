@@ -95,6 +95,29 @@
 
 ---
 
+### User Story 5 - 隨機進場策略 (Random Entry Strategy) (Priority: P2)
+
+實作一個簡單的基準策略，用於驗證系統的下單與流轉機制。
+
+**Strategy Logic**:
+- **Trigger**: 針對通過初階篩選的股票進行巡覽。
+- **Entry Condition**: 產生一個 1~100 的隨機亂數，若數值 <= 10 (由設定檔控制機率) 則觸發買進訊號。
+- **Price**: 掛單價格設為當下「最佳買入第 2 檔 (Best Bid 2)」的價格。
+- **Quantity**: 買入 1 張 (1000 股)。
+- **Exclusion Rule**: 若某股票已存在於「監控池 (Monitoring Pool)」中（即持有部位或有未成交委託），則策略應跳過該股票，避免重複建倉；待該股票完全平倉移除後，才可再次被策略選中。
+
+**Configuration (appsettings.json)**:
+- 需可控制策略是否啟用 (Enabled)。
+- 需可調整觸發機率 (ProbabilityPercent)。
+
+**Acceptance Scenarios**:
+
+1. **Given** 策略設定機率為 10%, **When** 掃描股票時產生亂數 5, **Then** 應產生買入訊號，價格為 Buy2Price。
+2. **Given** 股票 A 目前在庫 (Active Position), **When** 策略掃描到股票 A, **Then** 應直接忽略，不論亂數為何。
+3. **Given** 股票 A 已平倉出場, **When** 下一次掃描, **Then** 股票 A 有機會再次被選中。
+
+---
+
 ## Requirements *(mandatory)*
 
 ### Functional Requirements

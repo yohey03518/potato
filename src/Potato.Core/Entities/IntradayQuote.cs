@@ -8,4 +8,6 @@ public class IntradayQuote
     public decimal? Change { get; set; }
     public decimal? ChangePercent { get; set; }
     public long LastUpdated { get; set; }
+    public List<OrderBookUnit> Bids { get; set; } = new();
+    public List<OrderBookUnit> Asks { get; set; } = new();
 }

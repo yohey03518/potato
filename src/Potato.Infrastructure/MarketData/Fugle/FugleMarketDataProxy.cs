@@ -6,20 +6,12 @@ using Potato.Infrastructure.MarketData.Fugle.Models;
 
 namespace Potato.Infrastructure.MarketData.Fugle;
 
-public class FugleMarketDataProxy : IMarketDataProxy
+public class FugleMarketDataProxy(IFugleIntradayClient intradayClient, IFugleSnapshotClient snapshotClient)
+    : IMarketDataProxy
 {
-    private readonly IFugleIntradayClient _intradayClient;
-    private readonly IFugleSnapshotClient _snapshotClient;
-
-    public FugleMarketDataProxy(IFugleIntradayClient intradayClient, IFugleSnapshotClient snapshotClient)
-    {
-        _intradayClient = intradayClient;
-        _snapshotClient = snapshotClient;
-    }
-
     public async Task<IntradayQuote?> GetIntradayQuoteAsync(string symbolId)
     {
-        var json = await _intradayClient.GetIntradayQuoteAsync(symbolId);
+        var json = await intradayClient.GetIntradayQuoteAsync(symbolId);
         var response = JsonSerializer.Deserialize<IntradayQuoteResponse>(json);
 
         if (response == null) return null;
@@ -31,13 +23,15 @@ public class FugleMarketDataProxy : IMarketDataProxy
             LastPrice = response.LastPrice,
             Change = response.Change,
             ChangePercent = response.ChangePercent,
-            LastUpdated = response.LastUpdated
+            LastUpdated = response.LastUpdated,
+            Bids = response.Bids?.Select(b => new OrderBookUnit(b.Price, b.Volume)).ToList() ?? new List<OrderBookUnit>(),
+            Asks = response.Asks?.Select(a => new OrderBookUnit(a.Price, a.Volume)).ToList() ?? new List<OrderBookUnit>()
         };
     }
 
     public async Task<List<StockSnapshot>> GetSnapshotQuotesAsync(string market)
     {
-        var fugleData = await _snapshotClient.GetSnapshotQuotesAsync(market);
+        var fugleData = await snapshotClient.GetSnapshotQuotesAsync(market);
 
         return fugleData.Select(d => new StockSnapshot
         {

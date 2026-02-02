@@ -1,7 +1,5 @@
-using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Potato.Infrastructure.MarketData.Fugle.Clients;
 using Potato.Infrastructure.MarketData.Fugle.Models;
 
 namespace Potato.Infrastructure.MarketData.Fugle.Clients;
