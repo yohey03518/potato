@@ -64,7 +64,11 @@ try
     });
 
     // 3. Register Market Data Proxy (Core Interface -> Infrastructure Implementation)
+    // 3. Register Market Data Proxy (Core Interface -> Infrastructure Implementation)
     builder.Services.AddSingleton<IMarketDataProxy, FugleMarketDataProxy>();
+
+    // 4. Register Initial Candidate Filter
+    builder.Services.AddSingleton<IInitialCandidateFilter, InitialCandidateFilter>();
 
     // 4. Register Strategies
     builder.Services.AddSingleton<IStrategy, Potato.Core.Services.RandomEntryStrategy>();
