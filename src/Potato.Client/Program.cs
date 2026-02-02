@@ -17,15 +17,12 @@ try
 
     var builder = Host.CreateApplicationBuilder(args);
 
-    // Configure Serilog
     builder.Services.AddSerilog();
 
-    // Configure FugleApiClientConfig
     var fugleConfig = new FugleApiClientConfig();
     builder.Configuration.GetSection("FugleApi").Bind(fugleConfig);
     builder.Services.AddSingleton(fugleConfig);
 
-    // 1. Register Intraday Client (Always Real)
     builder.Services.AddHttpClient<IFugleIntradayClient, FugleIntradayApiClient>(client =>
     {
         if (!string.IsNullOrEmpty(fugleConfig.ApiKey))
@@ -34,7 +31,6 @@ try
         }
     });
 
-    // 2. Register Snapshot Client (Real or Mock based on config)
     var useMockSnapshot = builder.Configuration.GetValue<bool>("FugleApi:UseMockSnapshot");
     
     if (useMockSnapshot)
@@ -54,7 +50,6 @@ try
 
     }
 
-    // 3. Register Technical Client
     builder.Services.AddHttpClient<IFugleTechnicalClient, FugleTechnicalApiClient>(client =>
     {
         if (!string.IsNullOrEmpty(fugleConfig.ApiKey))
@@ -63,14 +58,10 @@ try
         }
     });
 
-    // 3. Register Market Data Proxy (Core Interface -> Infrastructure Implementation)
-    // 3. Register Market Data Proxy (Core Interface -> Infrastructure Implementation)
     builder.Services.AddSingleton<IMarketDataProxy, FugleMarketDataProxy>();
 
-    // 4. Register Initial Candidate Filter
     builder.Services.AddSingleton<IInitialCandidateFilter, InitialCandidateFilter>();
 
-    // 4. Register Strategies
     builder.Services.AddSingleton<IStrategy, Potato.Core.Services.RandomEntryStrategy>();
 
     // Register the Hosted Service

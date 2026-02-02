@@ -18,7 +18,7 @@ public class StockPriceMonitorService(
     {
         logger.LogInformation("StockPriceMonitorService is starting.");
 
-        var candidates = await initialCandidateFilter.FilterAsync(stoppingToken);
+        var candidates = await initialCandidateFilter.GetAsync(stoppingToken);
 
         while (!stoppingToken.IsCancellationRequested)
         {

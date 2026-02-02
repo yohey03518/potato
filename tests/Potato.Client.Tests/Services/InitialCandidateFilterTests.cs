@@ -24,7 +24,7 @@ public class InitialCandidateFilterTests
     }
 
     [Test]
-    public async Task FilterAsync_ShouldReturnEmpty_WhenVolumeBelowThreshold()
+    public async Task GetAsync_ShouldReturnEmpty_WhenVolumeBelowThreshold()
     {
         // Arrange
         var lowVolumeStock = new StockSnapshot { Symbol = "2330", TradeVolume = 4000 };
@@ -32,14 +32,14 @@ public class InitialCandidateFilterTests
         _marketDataProxyMock.GetSnapshotQuotesAsync("OTC").Returns(new List<StockSnapshot>());
 
         // Act
-        var result = await _filter.FilterAsync(CancellationToken.None);
+        var result = await _filter.GetAsync(CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();
     }
 
     [Test]
-    public async Task FilterAsync_ShouldReturnCandidate_WhenConditionsMet_Case1_YesterdayData()
+    public async Task GetAsync_ShouldReturnCandidate_WhenConditionsMet_Case1_YesterdayData()
     {
         // Case 1: Snapshot Date < Today. Compare ClosePrice vs SMA(T-1)
         var today = DateOnly.FromDateTime(DateTime.Now);
@@ -62,14 +62,14 @@ public class InitialCandidateFilterTests
             .Returns(smaData);
 
         // Act
-        var result = await _filter.FilterAsync(CancellationToken.None);
+        var result = await _filter.GetAsync(CancellationToken.None);
 
         // Assert
         result.Should().ContainSingle().Which.Symbol.Should().Be("2330");
     }
 
     [Test]
-    public async Task FilterAsync_ShouldReturnCandidate_WhenConditionsMet_Case2_TodayData()
+    public async Task GetAsync_ShouldReturnCandidate_WhenConditionsMet_Case2_TodayData()
     {
         // Case 2: Snapshot Date == Today. Compare (Close - Change) vs SMA(T-1)
         var today = DateOnly.FromDateTime(DateTime.Now);
@@ -94,14 +94,14 @@ public class InitialCandidateFilterTests
             .Returns(smaData);
 
         // Act
-        var result = await _filter.FilterAsync(CancellationToken.None);
+        var result = await _filter.GetAsync(CancellationToken.None);
 
         // Assert
         result.Should().ContainSingle().Which.Symbol.Should().Be("2330");
     }
 
     [Test]
-    public async Task FilterAsync_ShouldFilterOut_WhenPriceBelowMA()
+    public async Task GetAsync_ShouldFilterOut_WhenPriceBelowMA()
     {
         var today = DateOnly.FromDateTime(DateTime.Now);
         var yesterday = today.AddDays(-1);
@@ -123,7 +123,7 @@ public class InitialCandidateFilterTests
             .Returns(smaData);
 
         // Act
-        var result = await _filter.FilterAsync(CancellationToken.None);
+        var result = await _filter.GetAsync(CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();

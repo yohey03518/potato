@@ -9,7 +9,7 @@ public class InitialCandidateFilter(
     ILogger<InitialCandidateFilter> logger)
     : IInitialCandidateFilter
 {
-    public async Task<List<StockSnapshot>> FilterAsync(CancellationToken stoppingToken)
+    public async Task<List<StockSnapshot>> GetAsync(CancellationToken stoppingToken)
     {
         // 1. Fetch Full Snapshot for initial filtering
         var tseData = await marketDataProxy.GetSnapshotQuotesAsync("TSE");
