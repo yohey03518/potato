@@ -57,7 +57,7 @@ Version: 1.1.0 -> 1.2.0
 
 **Auditability**: All user prompts driving changes must be recorded.
 
-**Protected Artifacts**: The AI agent is **STRICTLY PROHIBITED** from modifying files in `.gemini/`, `.specify/scripts/`, and `.specify/templates/` unless explicitly commanded by the user. These directories contain critical agent infrastructure.
+**Protected Artifacts**: The AI agent is **STRICTLY PROHIBITED** from modifying files in `.agent/`, `.specify/scripts/`, and `.specify/templates/` unless explicitly commanded by the user. These directories contain critical agent infrastructure.
 
 ## Governance
 

@@ -1,6 +1,3 @@
-description = "Execute the implementation planning workflow using the plan template to generate design artifacts."
-
-prompt = """
 ---
 description: Execute the implementation planning workflow using the plan template to generate design artifacts.
 handoffs: 
@@ -90,4 +87,3 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 - Use absolute paths
 - ERROR on gate failures or unresolved clarifications
-"""

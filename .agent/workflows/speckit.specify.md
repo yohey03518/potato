@@ -1,8 +1,5 @@
-description = "Create or update the feature specification from a natural language feature description."
-
-prompt = """
 ---
-description: Create or update the feature specification from a natural language feature description.
+description: Create/update feature spec from description.
 handoffs: 
   - label: Build Technical Plan
     agent: speckit.plan
@@ -23,7 +20,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-The text the user typed after `/speckit.specify` in the triggering message **is** the feature description. Assume you always have it available in this conversation even if `{{args}}` appears literally below. Do not ask the user to repeat it unless they provided an empty command.
+The text after `/speckit.specify` is the feature description. It is always available. Only ask for input if command was empty.
 
 Given that feature description, do this:
 
@@ -35,8 +32,6 @@ Given that feature description, do this:
    - Keep it concise but descriptive enough to understand the feature at a glance
    - Examples:
      - "I want to add user authentication" → "user-auth"
-     - "Implement OAuth2 integration for the API" → "oauth2-api-integration"
-     - "Create a dashboard for analytics" → "analytics-dashboard"
      - "Fix payment processing timeout bug" → "fix-payment-timeout"
 
 2. **Check for existing branches before creating new one**:
@@ -75,29 +70,17 @@ Given that feature description, do this:
 
 4. Follow this execution flow:
 
-    1. Parse user description from Input
-       If empty: ERROR "No feature description provided"
-    2. Extract key concepts from description
-       Identify: actors, actions, data, constraints
-    3. For unclear aspects:
-       - Make informed guesses based on context and industry standards
-       - Only mark with [NEEDS CLARIFICATION: specific question] if:
-         - The choice significantly impacts feature scope or user experience
-         - Multiple reasonable interpretations exist with different implications
-         - No reasonable default exists
-       - **LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total**
-       - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
-    4. Fill User Scenarios & Testing section
-       If no clear user flow: ERROR "Cannot determine user scenarios"
-    5. Generate Functional Requirements
-       Each requirement must be testable
-       Use reasonable defaults for unspecified details (document assumptions in Assumptions section)
-    6. Define Success Criteria
-       Create measurable, technology-agnostic outcomes
-       Include both quantitative metrics (time, performance, volume) and qualitative measures (user satisfaction, task completion)
-       Each criterion must be verifiable without implementation details
-    7. Identify Key Entities (if data involved)
-    8. Return: SUCCESS (spec ready for planning)
+     1. Parse Input. If empty: ERROR.
+     2. Identify: actors, actions, data, constraints.
+     3. For unclear aspects:
+        - Guess based on standards.
+        - [NEEDS CLARIFICATION] only if critical (scope/UX impact).
+        - **LIMIT: Max 3 markers**. Prioritize: scope > security > UX.
+     4. Fill Scenarios. If no flow: ERROR.
+     5. Generate Testable Requirements (use assumptions).
+     6. Define Success Criteria (measurable, user-focused, verifiable).
+     7. Identify Key Entities.
+     8. Return: SUCCESS.
 
 5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
 
@@ -148,18 +131,11 @@ Given that feature description, do this:
 
    c. **Handle Validation Results**:
 
-      - **If all items pass**: Mark checklist complete and proceed to step 6
-
-      - **If items fail (excluding [NEEDS CLARIFICATION])**:
-        1. List the failing items and specific issues
-        2. Update the spec to address each issue
-        3. Re-run validation until all items pass (max 3 iterations)
-        4. If still failing after 3 iterations, document remaining issues in checklist notes and warn user
-
-      - **If [NEEDS CLARIFICATION] markers remain**:
-        1. Extract all [NEEDS CLARIFICATION: ...] markers from the spec
-        2. **LIMIT CHECK**: If more than 3 markers exist, keep only the 3 most critical (by scope/security/UX impact) and make informed guesses for the rest
-        3. For each clarification needed (max 3), present options to user in this format:
+      - **If pass**: Proceed.
+      - **If fail**: Update spec and re-validate (max 3x).
+      - **If clarifications**:
+        1. Extract max 3 critical markers.
+        2. Present options:
 
            ```markdown
            ## Question [N]: [Topic]
@@ -179,7 +155,6 @@ Given that feature description, do this:
            
            **Your choice**: _[Wait for user response]_
            ```
-
         4. **CRITICAL - Table Formatting**: Ensure markdown tables are properly formatted:
            - Use consistent spacing with pipes aligned
            - Each cell should have spaces around content: `| Content |` not `|Content|`
@@ -259,4 +234,3 @@ Success criteria must be:
 - "Database can handle 1000 TPS" (implementation detail, use user-facing metric)
 - "React components render efficiently" (framework-specific)
 - "Redis cache hit rate above 80%" (technology-specific)
-"""
